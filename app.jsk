@@ -4,6 +4,15 @@ function App() {
   const[email,setEmail]= useState("");
   const[password, setPassword]= useState("");
   const[isLoggedIn,setIsLoggedIn]=useState(false);
+  const[fromStation, setFromStation]=useState("");
+  const[toStation, setToStation]=useState("");
+  const[journeyDate, setJourneyDate]=useState("");
+  const[searchResult,setSearchResult]=useState([]);
+  const[selectedTrain,setSelectedTrain]=useState(null);
+  const [passengerName, setPassengerName] = useState("");
+  const [passengerAge, setPassengerAge] = useState("");
+  const [passengerGender, setPassengerGender] = useState("");
+  const [bookingDone,setBookingDone]=useState(false);
   function handleLogin(){
     if(email===""||password===""){
       alert("please fill all fields");
@@ -15,6 +24,62 @@ function App() {
     setIsLoggedIn(true);
     alert("login successful"); 
   }
+  const trains = [
+  {
+    trainNo: "12017",
+    trainName: "Dehradun Shatabdi",
+    from: "Dehradun",
+    to: "Delhi",
+    departure: "07:00 AM",
+    arrival: "01:45 PM",
+    fare: 850
+  },
+  {
+    trainNo: "15014",
+    trainName: "Ranikhet Express",
+    from: "Kathgodam",
+    to: "Delhi",
+    departure: "08:30 PM",
+    arrival: "05:00 AM",
+    fare: 450
+  },
+  {
+    trainNo: "12205",
+    trainName: "Nanda Devi Express",
+    from: "Dehradun",
+    to: "Delhi",
+    departure: "11:50 PM",
+    arrival: "05:50 AM",
+    fare: 620
+  }
+];
+  function handleSearch() {
+
+  if(fromStation === "" || toStation === "" || journeyDate === ""){
+    alert("Please fill all search details");
+    return;
+  }
+const result = trains.filter((train) => {
+  return (
+    train.from.toLowerCase() === fromStation.toLowerCase() &&
+    train.to.toLowerCase() === toStation.toLowerCase()
+  );
+});
+setSearchResult(result);
+} 
+function handleBooking() {
+
+  if (
+    passengerName === "" ||
+    passengerAge === "" ||
+    passengerGender === ""
+  ) {
+    alert("Please fill all passenger details");
+    return;
+  }
+  setBookingDone(true);
+  alert("🎉 Booking Successful!");
+}
   return (
 <div className="container">
   <h1>Railway ticket booking</h1>
@@ -43,6 +108,8 @@ function App() {
     <input
       type="text"
       placeholder="From Station"
+      value={fromStation}
+      onChange={(e)=>setFromStation(e.target.value)}
     />
 
     <br /><br />
@@ -50,21 +117,87 @@ function App() {
     <input
       type="text"
       placeholder="To Station"
+      value={toStation}
+      onChange={(e)=>setToStation(e.target.value)}
     />
 
     <br /><br />
 
     <input
       type="date"
+      value={journeyDate}
+      onChange={(e)=>setJourneyDate(e.target.value)}
     />
 
     <br /><br />
 
-    <button>Search Trains</button>
+    <button onClick={handleSearch}>Search Trains</button>
+  
+{searchResult.map((train) => (
+  <div key={train.trainNo}>
+    <h3>{train.trainName}</h3>
+    <p>Train No: {train.trainNo}</p>
+    <p>{train.from} ➜ {train.to}</p>
+    <p>{train.departure} - {train.arrival}</p>
+    <p>Fare: ₹{train.fare}</p>
+    <button onClick={() => setSelectedTrain(train)}>
+      Book Now
+      </button>
+    <hr />
+  </div>
+))}
+{selectedTrain && (
+  <>
+    <h2>Booking Details</h2>
+
+    <p><b>Train:</b> {selectedTrain.trainName}</p>
+
+    <p><b>Train No:</b> {selectedTrain.trainNo}</p>
+
+    <p><b>Route:</b> {selectedTrain.from} ➜ {selectedTrain.to}</p>
+
+    <p><b>Fare:</b> ₹{selectedTrain.fare}</p>
+    <h2>Passenger Details</h2>
+
+<input
+  type="text"
+  placeholder="Passenger Name"
+  value={passengerName}
+  onChange={(e) => setPassengerName(e.target.value)}
+/>
+
+<br /><br />
+
+<input
+  type="number"
+  placeholder="Passenger Age"
+  value={passengerAge}
+  onChange={(e) => setPassengerAge(e.target.value)}
+/>
+
+<br /><br />
+
+<select
+  value={passengerGender}
+  onChange={(e) => setPassengerGender(e.target.value)}
+>
+  <option value="">Select Gender</option>
+  <option value="Male">Male</option>
+  <option value="Female">Female</option>
+  <option value="Other">Other</option>
+</select>
+
+<br /><br />
+
+<button onClick={handleBooking}>
+  Confirm Booking
+  </button>
   </>
 )}
+  </> 
+  )}
   </div>
-  )
- }
+  );
+  }
 
- export default App
+ export default App;
