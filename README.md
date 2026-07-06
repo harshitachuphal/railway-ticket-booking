@@ -37,3 +37,44 @@ Login Form → Validation → Welcome Screen + Search Inputs
 
 ## Next Step
 Build Node.js + Express backend for login and train search API.
+## 3. Search Component - Completed 6 July 2026
+**What I did:**
+- Created search form with From, To, and Date inputs
+- Added validation for empty fields
+- On submit, passes search data to Train List component
+
+**Flow:**
+Login → Search Form → Train List
+
+## 4. Train List Component - Completed 6 July 2026
+**What I did:**
+- Displayed list of trains based on search input
+- Showed train name, number, time, and available seats
+- Added "Book Now" button for each train
+
+**Flow:**
+Search → Train List → Book Now
+
+## 5. Booking Component - Completed 6 July 2026
+**What I did:**
+- User can select train from Train List
+- Shows selected train details on booking page
+
+**Flow:**
+Train List → Booking Page
+
+## 6. Passenger Details Component - Completed 6 July 2026
+**What I did:**
+- Added form to collect passenger name, age, gender
+- Validates required fields before proceeding
+
+**Flow:**
+Booking → Passenger Details Form
+
+## Current Progress
+- ✅ Login UI + Basic validation - Complete
+- ✅ CSS Styling - Complete
+- ✅ Search Component - Complete
+- ✅ Train List Component - Complete
+- ✅ Booking Component - Complete  
+- ✅ Passenger Details Component - Complete
