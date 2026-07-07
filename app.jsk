@@ -13,11 +13,37 @@ function App() {
   const [passengerAge, setPassengerAge] = useState("");
   const [passengerGender, setPassengerGender] = useState("");
   const [bookingDone,setBookingDone]=useState(false);
+  const [pnr,setPnr]= useState("");
+  const [isRegister, setIsRegister] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [registeredPassword, setRegisteredPassword] = useState("");
+  const [seat,setSeat]=useState("");
+  const [coach, setCoach] = useState("");
+  const [seatNo, setSeatNo] = useState("");
+  const [travelClass, setTravelClass] = useState("");
+  const [finalFare, setFinalFare] = useState(0);
+  const [bookingStatus, setBookingStatus] = useState("");
+
   function handleLogin(){
     if(email===""||password===""){
       alert("please fill all fields");
       return;
     }
+    const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+  alert(
+    "Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character."
+  );
+  return;
+  }
+  if (
+  email !== registeredEmail ||
+  password !== registeredPassword
+) {
+  alert("Invalid Email or Password");
+  return;
+}
     console.log("Email:",email);
     console.log("Password:",password);
 
@@ -65,6 +91,8 @@ const result = trains.filter((train) => {
     train.to.toLowerCase() === toStation.toLowerCase()
   );
 });
+setBookingDone(false);
+setSelectedTrain(null);
 setSearchResult(result);
 } 
 function handleBooking() {
@@ -72,33 +100,156 @@ function handleBooking() {
   if (
     passengerName === "" ||
     passengerAge === "" ||
-    passengerGender === ""
+    passengerGender === ""||
+    seat ===""
   ) {
     alert("Please fill all passenger details");
     return;
   }
+  const generatedPnr = Math.floor(
+    1000000000 + Math.random() * 9000000000
+  );
+
+  setPnr(generatedPnr);
+  const coaches = ["B1", "B2", "B3", "S1", "S2"];
+
+  const randomCoach =
+  coaches[Math.floor(Math.random() * coaches.length)];
+
+  const randomSeat =
+  Math.floor(Math.random() * 72) + 1;
+
+  setCoach(randomCoach);
+  setSeatNo(randomSeat);
+  let finalFare = selectedTrain.fare;
+
+if (travelClass === "3AC") {
+  finalFare += 300;
+} else if (travelClass === "2AC") {
+  finalFare += 600;
+} else if (travelClass === "1AC") {
+  finalFare += 1000;
+}
+setFinalFare(finalFare);
+setCoach(randomCoach);
+setSeatNo(randomSeat);
+const status = ["Confirmed", "RAC", "Waiting"];
+
+const randomStatus =
+  status[Math.floor(Math.random() * status.length)];
+
+setBookingStatus(randomStatus);
+
   setBookingDone(true);
+
   alert("🎉 Booking Successful!");
 }
-  return (
+
+function handleCancel() {
+  setBookingDone(false);
+
+  setPassengerName("");
+  setPassengerAge("");
+  setPassengerGender("");
+
+  setSeat("");
+  setTravelClass("");
+
+  setCoach("");
+  setSeatNo("");
+
+  setPnr("");
+
+  alert("Ticket Cancelled Successfully");
+}
+
+return (
+function handleRegister() {
+
+  if (registeredEmail === "" || registeredPassword === "") {
+    alert("Please fill all fields");
+    return;
+  }
+
+  setEmail(registeredEmail);
+  setPassword(registeredPassword);
+
+  alert("Registration Successful!");
+
+  setIsRegister(false);
+}
+return(
 <div className="container">
   <h1>Railway ticket booking</h1>
-{!isLoggedIn &&(
+{!isLoggedIn && (
   <div className="login-box">
-  <h2>login</h2>
-  <input type= "email" 
-  placeholder="enter you email"
-  value={email}
-  onChange={(e) =>setEmail(e.target.value)}
-  />
-  <br></br>
-  <input type= "password" 
-  placeholder="enter your password"
-  value={password}
-  onChange={(e)=> setPassword(e.target.value)}
-  />
-  <br></br>
-  <button onClick={handleLogin}>Login </button>
+
+    {!isRegister ? (
+      <>
+        <h2>Login</h2>
+
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          type="password"
+          placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <br /><br />
+
+        <button onClick={handleLogin}>Login</button>
+
+        <br /><br />
+
+        <button onClick={() => setIsRegister(true)}>
+          New User? Register
+        </button>
+
+      </>
+    ) : (
+      <>
+        <h2>Register</h2>
+
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={registeredEmail}
+          onChange={(e) => setRegisteredEmail(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          type="password"
+          placeholder="Enter Password"
+          value={registeredPassword}
+          onChange={(e) => setRegisteredPassword(e.target.value)}
+        />
+
+        <br /><br />
+
+        <button onClick={handleRegisterS}>
+          Register
+        </button>
+
+        <br /><br />
+
+        <button onClick={() => setIsRegister(false)}>
+          Already have an account? Login
+        </button>
+
+      </>
+    )}
+
   </div>
 )}
   {isLoggedIn && (
@@ -157,6 +308,7 @@ function handleBooking() {
     <p><b>Route:</b> {selectedTrain.from} ➜ {selectedTrain.to}</p>
 
     <p><b>Fare:</b> ₹{selectedTrain.fare}</p>
+
     <h2>Passenger Details</h2>
 
 <input
@@ -188,10 +340,80 @@ function handleBooking() {
 </select>
 
 <br /><br />
+<select
+  value={seat}
+  onChange={(e) => setSeat(e.target.value)}
+>
+  <option value="">Select Seat Preference</option>
+  <option value="Window">Window</option>
+  <option value="Middle">Middle</option>
+  <option value="Aisle">Aisle</option>
+</select>
+
+<br /><br />
+
+<select
+  value={travelClass}
+  onChange={(e) => setTravelClass(e.target.value)}
+>
+  <option value="">Select Class</option>
+  <option value="Sleeper">Sleeper</option>
+  <option value="3AC">3AC</option>
+  <option value="2AC">2AC</option>
+  <option value="1AC">1AC</option>
+</select>
+
+<br /><br />
+
+<button onClick={handleBooking}></button>
 
 <button onClick={handleBooking}>
   Confirm Booking
   </button>
+
+  {bookingDone && (
+  <div className="ticket">
+
+    <h2>🎫 E-Ticket</h2>
+
+    <p><b>Passenger:</b> {passengerName}</p>
+
+    <p><b>Age:</b> {passengerAge}</p>
+
+    <p><b>Gender:</b> {passengerGender}</p>
+
+    <p><b>Seat Preference:</b> {seat}</p>
+
+    <p><b>Train:</b> {selectedTrain.trainName}</p>
+
+    <p><b>Train No:</b> {selectedTrain.trainNo}</p>
+
+    <p><b>From:</b> {selectedTrain.from}</p>
+
+    <p><b>To:</b> {selectedTrain.to}</p>
+
+    <p><b>Date:</b> {journeyDate}</p>
+
+    <p><b>PNR:</b> {pnr}</p>
+
+    <p><b>Status:</b> {bookingStatus}</p>
+
+    <p><b>Coach:</b> {coach}</p>
+
+    <p><b>Seat No:</b> {seatNo}</p>
+
+    <p><b>Class:</b> {travelClass}</p>
+
+    <p><b>Fare:</b> ₹{finalfare}</p>
+
+    <br />
+
+    <button onClick={handleCancel}>
+    Cancel Ticket
+    </button>
+
+  </div>
+)}
   </>
 )}
   </> 
