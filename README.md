@@ -35,8 +35,7 @@ Login Form → Validation → Welcome Screen + Search Inputs
 - ⏳ Backend API - Pending
 - ⏳ Real Train Search - Pending
 
-## Next Step
-Build Node.js + Express backend for login and train search API.
+
 ## 3. Search Component - Completed 6 July 2026
 **What I did:**
 - Created search form with From, To, and Date inputs
@@ -78,3 +77,65 @@ Booking → Passenger Details Form
 - ✅ Train List Component - Complete
 - ✅ Booking Component - Complete  
 - ✅ Passenger Details Component - Complete
+- 
+## 7. Travel Class Component - Completed 7 July 2026
+**What I did:**
+- Added option to select travel class like Sleeper, 3AC, 2AC, 1AC
+- Fare changes dynamically based on selected class
+
+**Flow:**
+Passenger Details → Travel Class Selection → Seat Preference
+
+## 8. Seat Preference Component - Completed 7 July 2026
+**What I did:**
+- User can select seat preference: Lower, Middle, Upper, Side Lower, Side Upper
+- System assigns seat based on preference + availability
+
+**Flow:**
+Travel Class → Seat Preference → PNR Generation
+
+## 9. PNR + Coach + Seat Number Generation - Completed 7 July 2026
+**What I did:**
+- Auto-generated unique PNR number for each booking
+- Assigned coach number and seat number based on class and preference
+- Stored booking details temporarily using state
+
+**Flow:**
+Seat Preference → PNR/Coach/Seat Generated
+
+## 10. Dynamic Fare Calculation - Completed 7 July 2026
+**What I did:**
+- Fare calculated based on distance, travel class, and seat preference
+- Displayed total fare before final booking
+
+## 11. E-Ticket Generation - Completed 7 July 2026
+**What I did:**
+- Created e-ticket with passenger details, train info, PNR, coach, seat, and fare
+- Displayed ticket on screen after successful booking
+
+**Flow:**
+Booking Confirmed → E-Ticket Shown
+
+## 12. Cancel Ticket Feature - Completed 7 July 2026
+**What I did:**
+- Added cancel ticket functionality
+- Shows alert "Ticket Cancelled Successfully" on cancel
+- Removes booking from active bookings
+
+## Current Progress - Updated 7 July 2026
+- ✅ Login UI + Basic validation - Complete
+- ✅ CSS Styling - Complete  
+- ✅ Search Component - Complete
+- ✅ Train List Component - Complete
+- ✅ Booking Component - Complete  
+- ✅ Passenger Details Component - Complete
+- ✅ Travel Class Selection - Complete
+- ✅ Seat Preference - Complete
+- ✅ PNR/Coach/Seat Generation - Complete
+- ✅ Dynamic Fare - Complete
+- ✅ E-Ticket Generation - Complete
+- ✅ Cancel Ticket - Complete
+- ⏳ Backend API with Node.js + Express - Pending
+- ⏳ Database for storing bookings - Pending
+- ⏳ Register System UI - Pending
+
