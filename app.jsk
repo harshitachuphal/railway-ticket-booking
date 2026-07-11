@@ -23,7 +23,10 @@ function App() {
   const [travelClass, setTravelClass] = useState("");
   const [finalFare, setFinalFare] = useState(0);
   const [bookingStatus, setBookingStatus] = useState("");
-
+  const [bookingHistory, setBookingHistory] = useState([]);
+  const [searchPnr, setSearchPnr] = useState("");
+  const [pnrResult, setPnrResult] = useState(null);
+  const [sortOrder, setSortOrder] = useState("");
   function handleLogin(){
     if(email===""||password===""){
       alert("please fill all fields");
@@ -139,6 +142,21 @@ const randomStatus =
   status[Math.floor(Math.random() * status.length)];
 
 setBookingStatus(randomStatus);
+const newBooking = {
+  passengerName,
+  trainName: selectedTrain.trainName,
+  trainNo: selectedTrain.trainNo,
+  from: selectedTrain.from,
+  to: selectedTrain.to,
+  date: journeyDate,
+  pnr: generatedPnr,
+  coach: randomCoach,
+  seatNo: randomSeat,
+  status: randomStatus,
+  fare: finalFare,
+};
+
+setBookingHistory([...bookingHistory, newBooking]);
 
   setBookingDone(true);
 
@@ -162,8 +180,43 @@ function handleCancel() {
 
   alert("Ticket Cancelled Successfully");
 }
+function handleLogout() {
+  setIsLoggedIn(false);
 
-return (
+  setEmail("");
+  setPassword("");
+
+  setFromStation("");
+  setToStation("");
+  setJourneyDate("");
+
+  setSearchResult([]);
+  setSelectedTrain(null);
+
+  setPassengerName("");
+  setPassengerAge("");
+  setPassengerGender("");
+
+  setSeat("");
+  setTravelClass("");
+
+  setBookingDone(false);
+}
+function handlePnrSearch() {
+
+  const result = bookingHistory.find(
+    (booking) => booking.pnr.toString() === searchPnr
+  );
+
+  if (result) {
+    setPnrResult(result);
+  } else {
+    setPnrResult(null);
+    alert("PNR Not Found");
+  }
+
+}
+
 function handleRegister() {
 
   if (registeredEmail === "" || registeredPassword === "") {
@@ -183,6 +236,7 @@ return(
   <h1>Railway ticket booking</h1>
 {!isLoggedIn && (
   <div className="login-box">
+
 
     {!isRegister ? (
       <>
@@ -237,7 +291,7 @@ return(
 
         <br /><br />
 
-        <button onClick={handleRegisterS}>
+        <button onClick={handleRegister}>
           Register
         </button>
 
@@ -255,6 +309,16 @@ return(
   {isLoggedIn && (
   <>
     <h2>Welcome, {email}</h2>
+    <button onClick={handleLogout}>
+  Logout
+</button>
+
+<br /><br />
+<p>
+  <b>Total Bookings:</b> {bookingHistory.length}
+</p>
+
+<br />
 
     <input
       type="text"
@@ -283,8 +347,68 @@ return(
     <br /><br />
 
     <button onClick={handleSearch}>Search Trains</button>
+    <br /><br />
+
+<select
+  value={sortOrder}
+  onChange={(e) => setSortOrder(e.target.value)}
+>
+  <option value="">Sort By Fare</option>
+  <option value="low">Low to High</option>
+  <option value="high">High to Low</option>
+</select>
+
+<br /><br />
+    {searchResult.length === 0 &&
+ fromStation !== "" &&
+ toStation !== "" &&
+ journeyDate !== "" && (
+  <h3 style={{ color: "red" }}>
+    ❌ No Trains Found
+  </h3>
+)}
+<h2>Search Ticket By PNR</h2>
+
+<input
+  type="text"
+  placeholder="Enter PNR"
+  value={searchPnr}
+  onChange={(e) => setSearchPnr(e.target.value)}
+/>
+
+<br /><br />
+
+<button onClick={handlePnrSearch}>
+  Search PNR
+</button>
+
+<br /><br />
+
+{pnrResult && (
+  <div className="ticket">
+    <h3>PNR Details</h3>
+
+    <p><b>Passenger:</b> {pnrResult.passengerName}</p>
+    <p><b>Train:</b> {pnrResult.trainName}</p>
+    <p><b>Train No:</b> {pnrResult.trainNo}</p>
+    <p><b>From:</b> {pnrResult.from}</p>
+    <p><b>To:</b> {pnrResult.to}</p>
+    <p><b>Date:</b> {pnrResult.date}</p>
+    <p><b>PNR:</b> {pnrResult.pnr}</p>
+    <p><b>Status:</b> {pnrResult.status}</p>
+    <p><b>Coach:</b> {pnrResult.coach}</p>
+    <p><b>Seat:</b> {pnrResult.seatNo}</p>
+    <p><b>Fare:</b> ₹{pnrResult.fare}</p>
+  </div>
+)}
   
-{searchResult.map((train) => (
+  {[...searchResult]
+  .sort((a, b) => {
+    if (sortOrder === "low") return a.fare - b.fare;
+    if (sortOrder === "high") return b.fare - a.fare;
+    return 0;
+  })
+  .map((train) => (
   <div key={train.trainNo}>
     <h3>{train.trainName}</h3>
     <p>Train No: {train.trainNo}</p>
@@ -365,8 +489,6 @@ return(
 
 <br /><br />
 
-<button onClick={handleBooking}></button>
-
 <button onClick={handleBooking}>
   Confirm Booking
   </button>
@@ -404,7 +526,7 @@ return(
 
     <p><b>Class:</b> {travelClass}</p>
 
-    <p><b>Fare:</b> ₹{finalfare}</p>
+    <p><b>Fare:</b> ₹{finalFare}</p>
 
     <br />
 
@@ -413,13 +535,34 @@ return(
     </button>
 
   </div>
-)}
+  )}
+
+  {bookingHistory.length > 0 && (
+  <>
+    <h2>Booking History</h2>
+
+    {bookingHistory.map((booking, index) => (
+      <div key={index} className="ticket">
+        <p><b>Passenger:</b> {booking.passengerName}</p>
+        <p><b>Train:</b> {booking.trainName}</p>
+        <p><b>PNR:</b> {booking.pnr}</p>
+        <p><b>Status:</b> {booking.status}</p>
+        <p><b>Coach:</b> {booking.coach}</p>
+        <p><b>Seat:</b> {booking.seatNo}</p>
+        <p><b>Fare:</b> ₹{booking.fare}</p>
+        <hr />
+      </div>
+    ))}
+    </>
+  )}
+
   </>
 )}
-  </> 
-  )}
-  </div>
-  );
+</>
+)}
+
+</div>
+  ); 
   }
 
  export default App;
